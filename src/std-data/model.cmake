@@ -35,7 +35,7 @@ register_flag_optional(USE_ONEDPL
                    This requires the DPC++ compiler (other SYCL compilers are untested), required SYCL flags are added automatically."
         "OFF")
 
-register_flag_optional(CLANG_OFFLOAD
+register_flag_optional(AMDGPU_TARGET_OFFLOAD
         "Enable offloading support (via the non-standard `-stdpar`) for
          Clang/LLVM. The values are AMDGPU processors (https://www.llvm.org/docs/AMDGPUUsage.html#processors)
          which will be passed in via `--offload-arch=` argument.
@@ -65,13 +65,13 @@ macro(setup)
         register_definitions(USE_ONEDPL)
         register_link_library(oneDPL)
     endif ()
-    if (CLANG_OFFLOAD)
-        set(CLANG_FLAGS --hipstdpar --offload-arch=${CLANG_OFFLOAD})
-        if (NOT CLANG_OFFLOAD MATCHES "^gfx9")
-            list(APPEND CLANG_FLAGS --hipstdpar-interpose-alloc)
+    if (AMDGPU_TARGET_OFFLOAD)
+        set(AMDGPU_TARGET_OFFLOAD_FLAGS --hipstdpar --offload-arch=${AMDGPU_TARGET_OFFLOAD})
+        if (NOT AMDGPU_TARGET_OFFLOAD MATCHES "^gfx9")
+            list(APPEND AMDGPU_TARGET_OFFLOAD_FLAGS --hipstdpar-interpose-alloc)
         endif ()
 
-        register_append_cxx_flags(ANY ${CLANG_FLAGS})
+        register_append_cxx_flags(ANY ${AMDGPU_TARGET_OFFLOAD_FLAGS})
         register_append_link_flags(--hipstdpar)
     endif ()
 endmacro()
